@@ -1,5 +1,5 @@
 import math
-from scipy.stats import norm # type: ignore
+from scipy.stats import norm 
 
 def black_scholes_option_price(
     current_stock_price,
@@ -47,30 +47,24 @@ def black_scholes_option_price(
 
 
 # ------------------------------------------------------------
+# Code to make it INTERACTIVE
+print("Welcome to the Black-Scholes Option Pricing Calculator!\n")
 
-stock_price = 100.0
-strike_price = 100.0
-time_to_expiration = 1.0  # years
-risk_free_interest_rate = 0.05  # 5%
-volatility = 0.2  # 20%
+stock_price = float(input("Enter current stock price (S): "))
+strike_price = float(input("Enter strike price (K): "))
+time_to_expiration = float(input("Enter time to expiration (in years, e.g., 1 for one year): "))
+risk_free_interest_rate = float(input("Enter risk-free interest rate (as a decimal, e.g., 0.05 for 5%): "))
+volatility = float(input("Enter volatility (as a decimal, e.g., 0.2 for 20%): "))
+option_type = input("Enter option type ('call' or 'put'): ").strip().lower()
 
-call_option_price = black_scholes_option_price(
+# Calculate option price
+option_price = black_scholes_option_price(
     current_stock_price=stock_price,
     strike_price=strike_price,
     time_to_expiration_years=time_to_expiration,
     risk_free_rate=risk_free_interest_rate,
     volatility=volatility,
-    option_type='call'
+    option_type=option_type
 )
 
-put_option_price = black_scholes_option_price(
-    current_stock_price=stock_price,
-    strike_price=strike_price,
-    time_to_expiration_years=time_to_expiration,
-    risk_free_rate=risk_free_interest_rate,
-    volatility=volatility,
-    option_type='put'
-)
-
-print(f"Call Option Price: ${call_option_price:.2f}")
-print(f"Put Option Price:  ${put_option_price:.2f}")
+print(f"\nThe {option_type} option price is: ${option_price:.2f}")
