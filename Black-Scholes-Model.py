@@ -1,5 +1,8 @@
 import math
 from scipy.stats import norm 
+import tkinter as tk
+from tkinter import messagebox
+
 
 def black_scholes_option_price(
     current_stock_price,
@@ -47,24 +50,85 @@ def black_scholes_option_price(
 
 
 # ------------------------------------------------------------
-# Code to make it INTERACTIVE
-print("Welcome to the Black-Scholes Option Pricing Calculator!\n")
+# GUI Function
+def calculate_option():
+    try:
+        # Getting values from the GUI fields
+        stock_price = float(entry_stock_price.get())
+        strike_price = float(entry_strike_price.get())
+        time_to_expiration = float(entry_time_to_expiration.get())
+        risk_free_rate = float(entry_risk_free_rate.get())
+        volatility = float(entry_volatility.get())
+        option_type = option_var.get()
 
-stock_price = float(input("Enter current stock price (S): "))
-strike_price = float(input("Enter strike price (K): "))
-time_to_expiration = float(input("Enter time to expiration (in years, e.g., 1 for one year): "))
-risk_free_interest_rate = float(input("Enter risk-free interest rate (as a decimal, e.g., 0.05 for 5%): "))
-volatility = float(input("Enter volatility (as a decimal, e.g., 0.2 for 20%): "))
-option_type = input("Enter option type ('call' or 'put'): ").strip().lower()
+        # Calculate the option price
+        option_price = black_scholes_option_price(
+            current_stock_price=stock_price,
+            strike_price=strike_price,
+            time_to_expiration_years=time_to_expiration,
+            risk_free_rate=risk_free_rate,
+            volatility=volatility,
+            option_type=option_type
+        )
 
-# Calculate option price
-option_price = black_scholes_option_price(
-    current_stock_price=stock_price,
-    strike_price=strike_price,
-    time_to_expiration_years=time_to_expiration,
-    risk_free_rate=risk_free_interest_rate,
-    volatility=volatility,
-    option_type=option_type
-)
+        # Show the result
+        messagebox.showinfo("Option Price", f"The {option_type} option price is: ${option_price:.2f}")
 
-print(f"\nThe {option_type} option price is: ${option_price:.2f}")
+    except ValueError:
+        messagebox.showerror("Input Error", "Please enter valid numbers for all fields.")
+
+# Create main window
+root = tk.Tk()
+root.title("Black-Scholes Option Calculator")
+
+# Set window size
+root.geometry("400x400")
+
+# Create Labels and Entry fields
+label_stock_price = tk.Label(root, text="Enter Stock Price (S):")
+label_stock_price.pack()
+
+entry_stock_price = tk.Entry(root)
+entry_stock_price.pack()
+
+label_strike_price = tk.Label(root, text="Enter Strike Price (K):")
+label_strike_price.pack()
+
+entry_strike_price = tk.Entry(root)
+entry_strike_price.pack()
+
+label_time_to_expiration = tk.Label(root, text="Enter Time to Expiration (years):")
+label_time_to_expiration.pack()
+
+entry_time_to_expiration = tk.Entry(root)
+entry_time_to_expiration.pack()
+
+label_risk_free_rate = tk.Label(root, text="Enter Risk-Free Rate (as decimal, e.g., 0.05 for 5%):")
+label_risk_free_rate.pack()
+
+entry_risk_free_rate = tk.Entry(root)
+entry_risk_free_rate.pack()
+
+label_volatility = tk.Label(root, text="Enter Volatility (as decimal, e.g., 0.2 for 20%):")
+label_volatility.pack()
+
+entry_volatility = tk.Entry(root)
+entry_volatility.pack()
+
+# Option type (Call or Put)
+option_var = tk.StringVar(value="call")  # Default option type
+label_option_type = tk.Label(root, text="Select Option Type:")
+label_option_type.pack()
+
+radio_call = tk.Radiobutton(root, text="Call", variable=option_var, value="call")
+radio_call.pack()
+
+radio_put = tk.Radiobutton(root, text="Put", variable=option_var, value="put")
+radio_put.pack()
+
+# Calculate button
+calculate_button = tk.Button(root, text="Calculate Option Price", command=calculate_option)
+calculate_button.pack(pady=20)
+
+# Run the main event loop
+root.mainloop()
