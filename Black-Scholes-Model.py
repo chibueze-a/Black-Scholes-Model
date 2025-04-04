@@ -1,4 +1,6 @@
 import math
+import numpy as np
+import matplotlib.pyplot as plt
 from scipy.stats import norm 
 import tkinter as tk
 from tkinter import messagebox
@@ -77,6 +79,36 @@ def calculate_option():
     except ValueError:
         messagebox.showerror("Input Error", "Please enter valid numbers for all fields.")
 
+
+# GUI Function to plot the graph
+def plot_option_price():
+    try:
+        # Getting values from the GUI fields
+        strike_price = float(entry_strike_price.get())
+        time_to_expiration = float(entry_time_to_expiration.get())
+        risk_free_rate = float(entry_risk_free_rate.get())
+        volatility = float(entry_volatility.get())
+        option_type = option_var.get()
+
+        # Generate a range of stock prices
+        stock_prices = np.linspace(50, 150, 100)
+
+        # Calculate the option prices
+        option_prices = [black_scholes_option_price(stock, strike_price, time_to_expiration, risk_free_rate, volatility, option_type) for stock in stock_prices]
+
+        # Plotting the graph
+        plt.figure(figsize=(8, 6))
+        plt.plot(stock_prices, option_prices, label=f"{option_type.capitalize()} Option Price")
+        plt.title(f"{option_type.capitalize()} Option Price vs. Stock Price")
+        plt.xlabel("Stock Price")
+        plt.ylabel(f"{option_type.capitalize()} Option Price")
+        plt.grid(True)
+        plt.legend()
+        plt.show()
+
+    except ValueError:
+        messagebox.showerror("Input Error", "Please enter valid numbers for all fields.")
+
 # Create main window
 root = tk.Tk()
 root.title("Black-Scholes Option Calculator")
@@ -129,6 +161,11 @@ radio_put.pack()
 # Calculate button
 calculate_button = tk.Button(root, text="Calculate Option Price", command=calculate_option)
 calculate_button.pack(pady=20)
+
+# Plot button
+plot_button = tk.Button(root, text="Plot Option Price vs Stock Price", command=plot_option_price)
+plot_button.pack(pady=20)
+
 
 # Run the main event loop
 root.mainloop()
